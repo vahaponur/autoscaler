@@ -1,6 +1,6 @@
 {
   "name": "com.vahaponur.autoscaler",
-  "version": "1.2.1",
+  "version": "1.4.0",
   "displayName": "Auto Scaler",
   "description": "A Unity tool that automatically scales GameObjects to fit a target size. Useful for normalizing imported 3D models to consistent sizes.",
   "unity": "2021.3",
