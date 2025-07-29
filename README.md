@@ -14,16 +14,21 @@ A Unity tool that automatically scales GameObjects to fit a target size. Particu
 
 ## Installation
 
-### Option 1: Unity Package Manager (Git URL)
+### Option 1: Unity Package Manager (Git URL) - Recommended
 1. Open the Package Manager window (Window > Package Manager)
 2. Click the '+' button and select "Add package from git URL"
 3. Enter: `https://github.com/vahaponur/autoscaler.git`
+4. Click Add
 
-### Option 2: Local Installation
-1. Download this package
+### Option 2: Specific Version
+To install a specific version, use:
+- `https://github.com/vahaponur/autoscaler.git#v1.2.0`
+
+### Option 3: Local Installation
+1. Download this package from [GitHub](https://github.com/vahaponur/autoscaler)
 2. Extract to `YourProject/Packages/com.vahaponur.autoscaler`
 
-### Option 3: Manual Installation
+### Option 4: Manual Installation
 1. Copy the contents to your Assets folder
 
 ## Usage
