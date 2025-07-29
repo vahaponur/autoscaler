@@ -22,7 +22,7 @@ A Unity tool that automatically scales GameObjects to fit a target size. Particu
 
 ### Option 2: Specific Version
 To install a specific version, use:
-- `https://github.com/vahaponur/autoscaler.git#v1.2.0`
+- `https://github.com/vahaponur/autoscaler.git#v1.2.1`
 
 ### Option 3: Local Installation
 1. Download this package from [GitHub](https://github.com/vahaponur/autoscaler)
