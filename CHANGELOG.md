@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2] - 2025-08-03
+
+### Fixed
+- Translated all Turkish text to English for global usage
+- All tooltips now in English
+- All code comments now in English
+
 ## [1.4.1] - 2025-08-03
 
 ### Fixed
