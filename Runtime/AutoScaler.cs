@@ -20,21 +20,21 @@ public class AutoScaler : MonoBehaviour
     public string selectedPresetName = "None";
     
     [Header("Manual Settings")]
-    [Tooltip("En büyük eksen kaç metre olsun?")]
+    [Tooltip("Target size for the largest axis in meters")]
     public float targetSize = 1f;
     
-    [Tooltip("Alt objelerin renderer'larını da dahil et")]
+    [Tooltip("Include renderers from child objects")]
     public bool includeChildren = true;
     
     [Header("Scale Anchor")]
-    [Tooltip("Scale sırasında sabit kalacak nokta")]
+    [Tooltip("Anchor point that remains fixed during scaling")]
     public PivotPreset scaleAnchor = PivotPreset.Center;
     
     [Tooltip("Scale anchor offset (0-1 range)")]
     public Vector3 anchorOffset = new Vector3(0.5f, 0.5f, 0.5f);
 
 #if UNITY_EDITOR
-    [HideInInspector] public Vector3 debugSize;   // Yalnızca editörde gösterilecek
+    [HideInInspector] public Vector3 debugSize;   // Only visible in editor
 #endif
 
     [ContextMenu("Fit To Target")]
@@ -131,7 +131,7 @@ public class AutoScaler : MonoBehaviour
         foreach (var r in rends) b.Encapsulate(r.bounds);
 
 #if UNITY_EDITOR
-        debugSize = b.size;           // metre cinsinden gerçek boyut
+        debugSize = b.size;           // actual size in meters
 #endif
         return b;
     }
@@ -247,7 +247,7 @@ public class AutoScaler : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate() => FitToTarget();
 
-    // Sahnede sarı kutu
+    // Yellow box in scene view
     private void OnDrawGizmosSelected()
     {
         // Check if scale matches expected

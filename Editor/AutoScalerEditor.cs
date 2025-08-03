@@ -18,7 +18,7 @@ public class AutoScalerEditor : Editor
     private string[] presetNames;
     private List<ScalePreset> presets;
     
-    // Icon için
+    // For icon
     private Texture2D customIcon;
     
     private void OnEnable()
@@ -29,7 +29,7 @@ public class AutoScalerEditor : Editor
         scaleAnchorProp = serializedObject.FindProperty("scaleAnchor");
         anchorOffsetProp = serializedObject.FindProperty("anchorOffset");
         
-        // Icon'u yükle
+        // Load icon
         customIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(iconPath);
         
         RefreshPresetList();
@@ -53,7 +53,7 @@ public class AutoScalerEditor : Editor
         EditorGUILayout.Space(5);
         GUILayout.BeginHorizontal();
         
-        // Icon göster (eğer yüklendiyse)
+        // Show icon (if loaded)
         if (customIcon != null)
         {
             GUILayout.Label(customIcon, GUILayout.Width(32), GUILayout.Height(32));
