@@ -28,6 +28,7 @@ https://github.com/vahaponur/autoscaler.git
 ## Features
 
 - ✅ Real-time automatic scaling
+- ✅ Rotation-independent scaling (works correctly with rotated objects)
 - ✅ Preset system for quick sizing
 - ✅ Batch processing for multiple objects
 - ✅ Scale anchors (keep position while scaling)

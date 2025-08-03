@@ -179,8 +179,9 @@ public class AutoScalerEditor : Editor
         // Size mismatch warning
         if (scaler.targetSize > 0 && !scaler.IsScaleCorrect())
         {
-            Bounds currentBounds = scaler.GetCombinedBounds();
-            float currentLargest = Mathf.Max(currentBounds.size.x, currentBounds.size.y, currentBounds.size.z);
+            // Use local bounds for rotation-independent size check
+            Bounds localBounds = scaler.GetLocalBounds();
+            float currentLargest = Mathf.Max(localBounds.size.x, localBounds.size.y, localBounds.size.z);
             
             EditorGUILayout.Space();
             EditorGUILayout.HelpBox(

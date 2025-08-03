@@ -42,8 +42,9 @@ public class AutoScaler : MonoBehaviour
     {
         if (targetSize <= 0) return;
 
-        Bounds b = GetCombinedBounds();
-        float biggest = Mathf.Max(b.size.x, b.size.y, b.size.z);
+        // Use local bounds for rotation-independent scaling
+        Bounds localBounds = GetLocalBounds();
+        float biggest = Mathf.Max(localBounds.size.x, localBounds.size.y, localBounds.size.z);
         if (biggest < 1e-5f) return;
 
         // Store world position before scaling
@@ -52,10 +53,13 @@ public class AutoScaler : MonoBehaviour
         // Calculate pivot offset based on preset
         Vector3 pivotOffset = GetPivotOffset();
         
-        // Calculate the world position of the desired pivot point before scaling
-        Vector3 pivotWorldPos = b.min + Vector3.Scale(b.size, pivotOffset);
+        // Get world bounds for pivot calculation
+        Bounds worldBounds = GetCombinedBounds();
         
-        // Apply scale
+        // Calculate the world position of the desired pivot point before scaling
+        Vector3 pivotWorldPos = worldBounds.min + Vector3.Scale(worldBounds.size, pivotOffset);
+        
+        // Apply scale based on local bounds (rotation-independent)
         float factor = targetSize / biggest;
         transform.localScale *= factor;
         
@@ -98,8 +102,9 @@ public class AutoScaler : MonoBehaviour
     {
         if (targetSize <= 0) return true;
         
-        Bounds currentBounds = GetCombinedBounds();
-        float currentLargest = Mathf.Max(currentBounds.size.x, currentBounds.size.y, currentBounds.size.z);
+        // Use local bounds to check scale (rotation-independent)
+        Bounds localBounds = GetLocalBounds();
+        float currentLargest = Mathf.Max(localBounds.size.x, localBounds.size.y, localBounds.size.z);
         
         // Check if current largest dimension matches target size (with 5% tolerance)
         float tolerance = targetSize * 0.05f;
@@ -129,6 +134,114 @@ public class AutoScaler : MonoBehaviour
         debugSize = b.size;           // metre cinsinden gerçek boyut
 #endif
         return b;
+    }
+    
+    public Bounds GetLocalBounds()
+    {
+        Renderer[] rends;
+        
+        if (includeChildren)
+        {
+            rends = GetComponentsInChildren<Renderer>();
+        }
+        else
+        {
+            var renderer = GetComponent<Renderer>();
+            rends = renderer != null ? new[] { renderer } : new Renderer[0];
+        }
+        
+        if (rends.Length == 0) return new Bounds(Vector3.zero, Vector3.zero);
+        
+        // Calculate bounds in local space
+        Bounds localBounds = new Bounds(Vector3.zero, Vector3.zero);
+        bool boundsInitialized = false;
+        
+        foreach (var r in rends)
+        {
+            if (r == null) continue;
+            
+            // Get mesh bounds for MeshRenderer
+            if (r is MeshRenderer meshRenderer)
+            {
+                MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
+                if (meshFilter != null && meshFilter.sharedMesh != null)
+                {
+                    Bounds meshBounds = meshFilter.sharedMesh.bounds;
+                    
+                    // Transform mesh bounds to this object's local space
+                    Vector3 min = meshBounds.min;
+                    Vector3 max = meshBounds.max;
+                    Vector3[] corners = new Vector3[]
+                    {
+                        new Vector3(min.x, min.y, min.z),
+                        new Vector3(max.x, min.y, min.z),
+                        new Vector3(min.x, max.y, min.z),
+                        new Vector3(max.x, max.y, min.z),
+                        new Vector3(min.x, min.y, max.z),
+                        new Vector3(max.x, min.y, max.z),
+                        new Vector3(min.x, max.y, max.z),
+                        new Vector3(max.x, max.y, max.z)
+                    };
+                    
+                    // Transform corners from mesh space to world space, then to our local space
+                    foreach (var corner in corners)
+                    {
+                        Vector3 worldPoint = r.transform.TransformPoint(corner);
+                        Vector3 localPoint = transform.InverseTransformPoint(worldPoint);
+                        
+                        if (!boundsInitialized)
+                        {
+                            localBounds = new Bounds(localPoint, Vector3.zero);
+                            boundsInitialized = true;
+                        }
+                        else
+                        {
+                            localBounds.Encapsulate(localPoint);
+                        }
+                    }
+                }
+            }
+            else if (r is SkinnedMeshRenderer skinnedRenderer)
+            {
+                // For skinned mesh renderer, use its local bounds
+                Bounds meshBounds = skinnedRenderer.localBounds;
+                
+                // Transform bounds corners
+                Vector3 min = meshBounds.min;
+                Vector3 max = meshBounds.max;
+                Vector3[] corners = new Vector3[]
+                {
+                    new Vector3(min.x, min.y, min.z),
+                    new Vector3(max.x, min.y, min.z),
+                    new Vector3(min.x, max.y, min.z),
+                    new Vector3(max.x, max.y, min.z),
+                    new Vector3(min.x, min.y, max.z),
+                    new Vector3(max.x, min.y, max.z),
+                    new Vector3(min.x, max.y, max.z),
+                    new Vector3(max.x, max.y, max.z)
+                };
+                
+                foreach (var corner in corners)
+                {
+                    Vector3 worldPoint = r.transform.TransformPoint(corner);
+                    Vector3 localPoint = transform.InverseTransformPoint(worldPoint);
+                    
+                    if (!boundsInitialized)
+                    {
+                        localBounds = new Bounds(localPoint, Vector3.zero);
+                        boundsInitialized = true;
+                    }
+                    else
+                    {
+                        localBounds.Encapsulate(localPoint);
+                    }
+                }
+            }
+        }
+        
+        // Apply current scale to get actual size
+        Vector3 scaledSize = Vector3.Scale(localBounds.size, transform.localScale);
+        return new Bounds(localBounds.center, scaledSize);
     }
 
 #if UNITY_EDITOR
@@ -163,7 +276,9 @@ public class AutoScaler : MonoBehaviour
             
 #if UNITY_EDITOR
             // Draw warning text in scene
-            float currentLargest = Mathf.Max(b.size.x, b.size.y, b.size.z);
+            // Use local bounds for rotation-independent size
+            Bounds localBounds = GetLocalBounds();
+            float currentLargest = Mathf.Max(localBounds.size.x, localBounds.size.y, localBounds.size.z);
             UnityEditor.Handles.color = Color.red;
             UnityEditor.Handles.Label(b.center + Vector3.up * (b.size.y * 0.6f), 
                 "⚠️ SIZE MISMATCH!\n" + 

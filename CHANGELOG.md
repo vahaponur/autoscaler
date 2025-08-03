@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.1] - 2025-08-03
+
+### Fixed
+- Rotation-independent size calculation - objects now scale correctly regardless of rotation
+- Size mismatch warnings no longer appear when objects are rotated
+- Scale validation now uses local bounds instead of world bounds
+
+### Added
+- GetLocalBounds() method for accurate size measurement independent of object rotation
+
+### Improved
+- Scale calculations now work correctly for rotated objects
+- More accurate size reporting in editor and gizmos
+
 ## [1.4.0] - 2025-07-29
 
 ### Added
