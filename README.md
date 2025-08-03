@@ -25,6 +25,12 @@ https://github.com/vahaponur/autoscaler.git
 - Scale multiple objects at once
 - Create and manage custom presets
 
+### Auto Attach (Optional)
+- **Tools > AutoScaler > Toggle Auto-Attach**
+- When enabled, automatically adds AutoScaler component to new GameObjects with renderers
+- Useful for rapid prototyping and importing 3D models
+- Settings are saved per project
+
 ## Features
 
 - ✅ Real-time automatic scaling
@@ -34,6 +40,7 @@ https://github.com/vahaponur/autoscaler.git
 - ✅ Scale anchors (keep position while scaling)
 - ✅ Include/exclude child objects
 - ✅ Visual warnings for scale mismatches
+- ✅ Auto-attach to new objects (optional)
 - ✅ Undo/Redo support
 
 ## Requirements
